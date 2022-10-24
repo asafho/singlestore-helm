@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Values.ovverideName }}-internal
+  namespace: {{ .Values.namespace }}
+spec:
+  hosts:
+  - {{ .Values.db_url }}
+  gateways:
+  - {{ .Values.istio_gateway }}
+  tcp:
+  - match:
+    - port: 30306
+    route:
+    - destination:
+        port:
+          number: 3306
+        host: svc-{{ .Values.ovverideName }}-cluster-custom.{{ .Values.namespace }}.svc.cluster.local

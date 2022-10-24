@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ovverideName }}-operator
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/component: {{ .Values.ovverideName }}-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{ .Values.ovverideName }}-operator
+  template:
+    metadata:
+      labels:
+        name: {{ .Values.ovverideName }}-operator
+    spec:
+      serviceAccountName: "{{ .Values.ovverideName }}-operator"
+      containers:
+        - name: sdb-operator
+          image: {{ .Values.operatorImage }}
+          imagePullPolicy: Always
+          args: [
+            # Cause the operator to merge rather than replace annotations on services
+            "--merge-service-annotations",
+            # Allow the process inside the container to have read/write access to the `/var/lib/memsql` volume.
+            "--fs-group-id", "5555",
+            "--cluster-id", "{{ .Values.ovverideName }}-cluster"  ]
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "{{ .Values.ovverideName }}-operator"

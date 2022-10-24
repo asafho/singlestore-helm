@@ -1,0 +1,6 @@
+appVersion: v0.1
+description: A chart for singlestore operator objects
+engine: gotpl
+name: singlestore-operator
+version: 0.0.1
+apiVersion: v1

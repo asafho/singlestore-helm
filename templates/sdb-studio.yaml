@@ -1,0 +1,73 @@
+{{- if .Values.singlestore_studio.create -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdb-studio
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: sdb-studio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: sdb-studio
+  template:
+    metadata:
+      labels:
+        name: sdb-studio
+        app.kubernetes.io/name: sdb-studio
+        sidecar.istio.io/inject: "true"
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      containers:
+        - name: sdb-operator
+          image: burakince/singlestoredb-studio:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          {{- if .Values.singlestore_studio.tolerations -}}
+          {{- with .Values.singlestore_studio.tolerationss }}
+          tolerations:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{ end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: sdb-studio
+  name: svc-sdb-studio
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+  - name: sdb-studio
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: sdb-studio
+  type: ClusterIP
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: sdb-studio-internal
+  namespace: {{ .Values.namespace }}
+spec:
+  hosts:
+  - {{ .Values.singlestore_studio.studio_url }}
+  gateways:
+  - {{ .Values.istio_gateway }}
+  http:
+  - route:
+    - destination:
+        host: svc-sdb-studio.{{ .Values.namespace }}.svc.cluster.local
+        port:
+          number: 80
+
+{{ end }}

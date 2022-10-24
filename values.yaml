@@ -1,0 +1,83 @@
+
+namespace: "singlestore"
+ovverideName: "sdb"
+db_url: "sdb.example.com"
+license: ""
+
+istio_gateway: "istio-system/gatewayName"
+operatorImage: singlestore/operator:3.0.60-c818b3a1
+
+
+singlestore_studio:
+  create: false
+  studio_url: sdb-studio.example.com
+  #tolerations:
+  #  - effect: "NoSchedule"
+  #    key: "singlestore"
+  #    operator: "Exists"
+
+memsqlCluster:
+  name: sdb-cluster
+
+  nodeImageRepo: singlestore/node
+  nodeImageTag: alma-7.8.17-69cee1f1a3
+  # Must include either adminHashedPassword or adminHashedPasswordSecret, but not both.
+  # How to generate hashed password in python 2.x
+  # from hashlib import sha1
+  # print("*" + sha1(sha1('mypassword').digest()).hexdigest().upper())
+  adminHashedPassword: "*4XXXXXXXXXXXXXXXXXXX"
+
+  # Change redundancyLevel to 2 if you want to enable high availability.
+  # It is highly recommended you set this value to 2 for production deployments.
+  # Note: You must have an even number of leaf nodes to enable high availability.
+  # Refer to Managing High Availability for more information.
+  redundancyLevel: 1
+  # Users may declare a schedulingDetails section.
+  # This is an optional section that allows scheduling configurations to be set over
+  # different groups of pods via the node selector, affinity / anti-affinity, taints,
+  # and tolerations attributes
+  # https://archived.docs.singlestore.com/v7.1/reference/memsql-operator-reference/memsql-pod-scheduling/
+  schedulingDetails:
+    master:
+      tolerations:
+        - effect: "NoSchedule"
+          key: "singlestore"
+          operator: "Exists"
+        - effect: "NoSchedule"
+          key: "singlestore"
+          operator: "Exists"
+    aggregator:
+      tolerations:
+        - effect: "NoSchedule"
+          key: "singlestore"
+          operator: "Exists"
+        - effect: "NoSchedule"
+          key: "singlestore"
+          operator: "Exists"
+    leaf-ag1:
+      tolerations:
+        - effect: "NoSchedule"
+          key: "singlestore"
+          operator: "Exists"
+    leaf-ag2:
+      tolerations:
+        - effect: "NoSchedule"
+          key: "singlestore"
+          operator: "Exists"
+
+  # See aggregatorSpec
+  aggregatorSpec:
+    count: 1
+    height: 0.75
+    storageGB: 256
+    storageClass: "gp2"
+
+  # See leafSpec
+  leafSpec:
+    count: 1
+    height: 0.75
+    storageGB: 1024
+    storageClass: "gp2"
+
+  serviceSpec:
+    disableDDLAndDMLService: true

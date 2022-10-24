@@ -1,0 +1,27 @@
+apiVersion: memsql.com/v1alpha1
+kind: MemsqlCluster
+metadata:
+  name: {{ .Values.ovverideName }}-cluster
+  namespace: {{ .Values.namespace }}
+spec:
+  license: {{ .Values.singlestore_license }}
+  adminHashedPassword: "{{ .Values.memsqlCluster.adminHashedPassword }}"
+  nodeImage:
+    repository: {{ .Values.memsqlCluster.nodeImageRepo }}
+    tag: {{ .Values.memsqlCluster.nodeImageTag }}
+
+  redundancyLevel: {{ .Values.memsqlCluster.redundancyLevel }}
+
+  serviceSpec:
+{{ toYaml .Values.memsqlCluster.serviceSpec | indent 4 }}
+
+  aggregatorSpec:
+{{ toYaml .Values.memsqlCluster.aggregatorSpec | indent 4 }}
+
+  leafSpec:
+{{ toYaml .Values.memsqlCluster.leafSpec | indent 4 }}
+
+  {{ if .Values.memsqlCluster.schedulingDetails -}}
+  schedulingDetails:
+{{ toYaml .Values.memsqlCluster.schedulingDetails | indent 4 }}
+  {{- end }}
