@@ -24,7 +24,7 @@ The chart deploy singlestore on port 30306
     protocol: TCP
     targetPort: 3306
 
-Edit values.yaml
+# Edit values.yaml
 - db_url
 - license
 - istio_gateway
