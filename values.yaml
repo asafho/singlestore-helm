@@ -32,38 +32,36 @@ memsqlCluster:
   # Note: You must have an even number of leaf nodes to enable high availability.
   # Refer to Managing High Availability for more information.
   redundancyLevel: 1
+
+  
+  
+  
   # Users may declare a schedulingDetails section.
   # This is an optional section that allows scheduling configurations to be set over
   # different groups of pods via the node selector, affinity / anti-affinity, taints,
-  # and tolerations attributes
   # https://archived.docs.singlestore.com/v7.1/reference/memsql-operator-reference/memsql-pod-scheduling/
-  schedulingDetails:
-    master:
-      tolerations:
-        - effect: "NoSchedule"
-          key: "singlestore"
-          operator: "Exists"
-        - effect: "NoSchedule"
-          key: "singlestore"
-          operator: "Exists"
-    aggregator:
-      tolerations:
-        - effect: "NoSchedule"
-          key: "singlestore"
-          operator: "Exists"
-        - effect: "NoSchedule"
-          key: "singlestore"
-          operator: "Exists"
-    leaf-ag1:
-      tolerations:
-        - effect: "NoSchedule"
-          key: "singlestore"
-          operator: "Exists"
-    leaf-ag2:
-      tolerations:
-        - effect: "NoSchedule"
-          key: "singlestore"
-          operator: "Exists"
+  
+  #schedulingDetails:
+  #  master:
+  #    tolerations:
+  #      - effect: "NoSchedule"
+  #        key: "singlestore"
+  #        operator: "Exists"
+  #  aggregator:
+  #    tolerations:
+  #      - effect: "NoSchedule"
+  #        key: "singlestore"
+  #        operator: "Exists"
+  #  leaf-ag1:
+  #    tolerations:
+  #      - effect: "NoSchedule"
+  #        key: "singlestore"
+  #        operator: "Exists"
+  #  leaf-ag2:
+  #    tolerations:
+  #      - effect: "NoSchedule"
+  #        key: "singlestore"
+  #        operator: "Exists"
 
   # See aggregatorSpec
   aggregatorSpec:
